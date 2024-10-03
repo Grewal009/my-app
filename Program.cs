@@ -5,7 +5,7 @@ using pizza.api.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<IPizzasRepository, InMemoryPizzasRepository>();
+builder.Services.AddScoped<IPizzasRepository, EntityFrameworkPizzaRepository>();
 
 var connString = builder.Configuration.GetConnectionString("PizzaContext");
 
