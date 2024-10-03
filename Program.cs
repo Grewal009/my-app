@@ -14,7 +14,7 @@ builder.Services.AddSqlServer<PizzaContext>(connString);
 var app = builder.Build();
 
 //apply migrations on application startup
-app.Services.InitializeDb();
+await app.Services.InitializeDbAsync();
 
 app.MapPizzasEndpoints();
 

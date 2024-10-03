@@ -12,16 +12,16 @@ public static class PizzasEndpoints
 
         var group = routes.MapGroup("/pizzas.no").WithParameterValidation();
 
-        group.MapGet("/", (IPizzasRepository repository) => repository.GetAll().Select(p => p.AsDto()));
+        group.MapGet("/", async (IPizzasRepository repository) => (await repository.GetAllAsync()).Select(p => p.AsDto()));
 
-        group.MapGet("/{id}", (IPizzasRepository repository, int id) =>
+        group.MapGet("/{id}", async (IPizzasRepository repository, int id) =>
         {
-            Pizza? pizza = repository.GetById(id);
+            Pizza? pizza = await repository.GetByIdAsync(id);
             return pizza == null ? Results.NotFound() : Results.Ok(pizza.AsDto());
 
         }).WithName(pizzaEndpointName);
 
-        group.MapPost("/", (IPizzasRepository repository, CreatePizzaDto createPizzaDto) =>
+        group.MapPost("/", async (IPizzasRepository repository, CreatePizzaDto createPizzaDto) =>
         {
             Pizza pizza = new()
             {
@@ -34,14 +34,14 @@ public static class PizzasEndpoints
                 Vegetarian = createPizzaDto.Vegetarian,
                 GlutenFree = createPizzaDto.GlutenFree
             };
-            repository.Create(pizza);
+            await repository.CreateAsync(pizza);
 
             return Results.CreatedAtRoute(pizzaEndpointName, new { id = pizza.Id }, pizza);
         });
 
-        group.MapPut("/{id}", (IPizzasRepository repository, int id, UpdatePizzaDto updatedPizzaDto) =>
+        group.MapPut("/{id}", async (IPizzasRepository repository, int id, UpdatePizzaDto updatedPizzaDto) =>
         {
-            Pizza? pizza = repository.GetById(id);
+            Pizza? pizza = await repository.GetByIdAsync(id);
             if (pizza == null)
             {
                 return Results.NotFound();
@@ -56,18 +56,18 @@ public static class PizzasEndpoints
             pizza.Vegetarian = updatedPizzaDto.Vegetarian;
             pizza.GlutenFree = updatedPizzaDto.GlutenFree;
 
-            repository.Update(pizza);
+            await repository.UpdateAsync(pizza);
 
             return Results.NoContent();
 
         });
 
-        group.MapDelete("/{id}", (IPizzasRepository repository, int id) =>
+        group.MapDelete("/{id}", async (IPizzasRepository repository, int id) =>
         {
-            Pizza? pizza = repository.GetById(id);
+            Pizza? pizza = await repository.GetByIdAsync(id);
             if (pizza is not null)
             {
-                repository.Delete(id);
+                await repository.DeleteAsync(id);
             }
 
             return Results.NoContent();

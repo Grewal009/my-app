@@ -14,31 +14,32 @@ public class EntityFrameworkPizzaRepository : IPizzasRepository
         this.dbContext = dbContext;
     }
 
-    public IEnumerable<Pizza> GetAll()
+    public async Task<IEnumerable<Pizza>> GetAllAsync()
     {
-        return dbContext.Pizzas.AsNoTracking().ToList();
+        return await dbContext.Pizzas.AsNoTracking().ToListAsync();
     }
 
-    public Pizza? GetById(int id)
+    public async Task<Pizza?> GetByIdAsync(int id)
     {
-        return dbContext.Pizzas.Find(id);
+        return await dbContext.Pizzas.FindAsync(id);
     }
 
-    public void Create(Pizza pizza)
+    public async Task CreateAsync(Pizza pizza)
     {
         dbContext.Pizzas.Add(pizza);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
     }
 
-    public void Update(Pizza updatedPizza)
+    public async Task UpdateAsync(Pizza updatedPizza)
     {
         dbContext.Update(updatedPizza);
-        dbContext.SaveChanges();
+        await dbContext.SaveChangesAsync();
     }
 
-    public void Delete(int id)
+    public async Task DeleteAsync(int id)
     {
-        dbContext.Pizzas.Where(p => p.Id == id).ExecuteDelete();
+        await dbContext.Pizzas.Where(p => p.Id == id).ExecuteDeleteAsync();
     }
+
 
 }
