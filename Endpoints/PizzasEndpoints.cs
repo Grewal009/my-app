@@ -12,8 +12,10 @@ public static class PizzasEndpoints
 
         var group = routes.MapGroup("/pizzas.no").WithParameterValidation();
 
+        //Get all items
         group.MapGet("/", async (IPizzasRepository repository) => (await repository.GetAllAsync()).Select(p => p.AsDto()));
 
+        //Get items by id
         group.MapGet("/{id}", async (IPizzasRepository repository, int id) =>
         {
             Pizza? pizza = await repository.GetByIdAsync(id);
@@ -21,6 +23,7 @@ public static class PizzasEndpoints
 
         }).WithName(pizzaEndpointName);
 
+        //Post request to create new item
         group.MapPost("/", async (IPizzasRepository repository, CreatePizzaDto createPizzaDto) =>
         {
             Pizza pizza = new()
@@ -39,6 +42,8 @@ public static class PizzasEndpoints
             return Results.CreatedAtRoute(pizzaEndpointName, new { id = pizza.Id }, pizza);
         });
 
+
+        //Put request to update item
         group.MapPut("/{id}", async (IPizzasRepository repository, int id, UpdatePizzaDto updatedPizzaDto) =>
         {
             Pizza? pizza = await repository.GetByIdAsync(id);
@@ -62,6 +67,7 @@ public static class PizzasEndpoints
 
         });
 
+        //delete request to delete item
         group.MapDelete("/{id}", async (IPizzasRepository repository, int id) =>
         {
             Pizza? pizza = await repository.GetByIdAsync(id);
